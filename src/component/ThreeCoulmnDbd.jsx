@@ -19,6 +19,8 @@ const ThreeColumnDnd = () => {
     });
 
     const onDragEnd = (result) => {
+
+
         const { source, destination, draggableId, type } = result;
 
         if (
@@ -31,61 +33,72 @@ const ThreeColumnDnd = () => {
         }
 
         if (type === "column") {
-            console.log("column occurred");
+
             // Reordering columns
-            const newColumnOrder = Array.from(Object.keys(columns));
-            const [movedItem] = newColumnOrder.splice(source.index, 1);
-            newColumnOrder.splice(destination.index, 0, movedItem);
-            console.log(newColumnOrder);
+            const newColumnOrder = Object.keys(columns); // [column1, column2, column3]
+            const [movedItem] = newColumnOrder.splice(source.index, 1); // column1 or column2 or column3
+
+
+            newColumnOrder.splice(destination.index, 0, movedItem); // set Reordering columns 
+
+            // get new reorder list
             const newColumns = {};
             newColumnOrder.forEach((columnId) => {
                 newColumns[columnId] = columns[columnId];
             });
+
+            /* Alternative Solution
+            for (let i = 0; i < newColumnOrder.length; i++) {
+                newColumns[newColumnOrder[i]] = columns[newColumnOrder[i]];
+            } */
+
+            // set new reorder list
             setColumns(newColumns);
-        } else if (type === "item") {
-            // Reordering items within the same column or moving between columns
-            const sourceColumn = columns[source.droppableId];
-            const destinationColumn = columns[destination.droppableId];
-
-            if (source.droppableId === destination.droppableId) {
-                // Reordering items within the same column
-                const newItems = Array.from(sourceColumn.items);
-                newItems.splice(source.index, 1);
-                newItems.splice(destination.index, 0, draggableId);
-
-                setColumns({
-                    ...columns,
-                    [source.droppableId]: {
-                        ...sourceColumn,
-                        items: newItems,
-                    },
-                });
-            } else {
-                // Moving items between columns
-                const newSourceItems = Array.from(sourceColumn.items);
-                newSourceItems.splice(source.index, 1);
-
-                const newDestinationItems = Array.from(destinationColumn.items);
-                newDestinationItems.splice(destination.index, 0, draggableId);
-
-                setColumns({
-                    ...columns,
-                    [source.droppableId]: {
-                        ...sourceColumn,
-                        items: newSourceItems,
-                    },
-                    [destination.droppableId]: {
-                        ...destinationColumn,
-                        items: newDestinationItems,
-                    },
-                });
-            }
         }
+        // else if (type === "item") {
+        //     // Reordering items within the same column or moving between columns
+        //     const sourceColumn = columns[source.droppableId];
+        //     const destinationColumn = columns[destination.droppableId];
+
+        //     if (source.droppableId === destination.droppableId) {
+        //         // Reordering items within the same column
+        //         const newItems = Array.from(sourceColumn.items);
+        //         newItems.splice(source.index, 1);
+        //         newItems.splice(destination.index, 0, draggableId);
+
+        //         setColumns({
+        //             ...columns,
+        //             [source.droppableId]: {
+        //                 ...sourceColumn,
+        //                 items: newItems,
+        //             },
+        //         });
+        //     } else {
+        //         // Moving items between columns
+        //         const newSourceItems = Array.from(sourceColumn.items);
+        //         newSourceItems.splice(source.index, 1);
+
+        //         const newDestinationItems = Array.from(destinationColumn.items);
+        //         newDestinationItems.splice(destination.index, 0, draggableId);
+
+        //         setColumns({
+        //             ...columns,
+        //             [source.droppableId]: {
+        //                 ...sourceColumn,
+        //                 items: newSourceItems,
+        //             },
+        //             [destination.droppableId]: {
+        //                 ...destinationColumn,
+        //                 items: newDestinationItems,
+        //             },
+        //         });
+        //     }
+        // }
     };
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="all-column" direction="horizontal" type="column">
+            <Droppable droppableId="all-columns" direction="horizontal" type="column">
                 {(provided) => (
                     <div
                         {...provided.droppableProps}
